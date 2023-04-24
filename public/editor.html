@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <title>글 작성</title>
+</head>
+<style>
+    textarea {
+        display: block;
+    }
+    
+    h1>a:link {
+        color: black;
+        text-decoration: none;
+    }
+
+    h1>a:visited {
+        color: black;
+        text-decoration: none;
+    }
+
+    h1>a:hover {
+        color: black;
+        text-decoration: none;
+    }
+</style>
+
+<body>
+    <h1><a href="/">LV1 블로그</a></h1>
+    <h2>글 작성</h2>
+    <textarea name="" id="title" cols="30" rows="1" placeholder="제목을 입력하세요"></textarea>
+    <textarea name="" id="writer" cols="30" rows="1" placeholder="작성자명"></textarea>
+    <textarea name="" id="password" cols="30" rows="1" placeholder="비밀번호"></textarea>
+    <textarea name="" id="content" cols="30" rows="10" placeholder="당신의 이야기를 적어보세요..."></textarea>
+    <button>← 나가기</button>
+    <button>임시저장</button>
+    <button onclick="posting()" id="confirm_btn">출간하기</button>
+</body>
+<script>
+    const currentUrl = window.location.href;
+    post_id = currentUrl.split('editor/')[1];
+    console.log(post_id);
+    if (post_id != undefined) {
+        // 수정 모드
+        fetch(`/posts/${post_id}`).then(res => res.json()).then(data => {
+            console.log(data);
+            $('#title').text(data['title']);
+            $('#writer').text(data['writer']);
+            $('#password').text(data['password']);
+            $('#content').text(data['content']);
+
+            $('#confirm_btn').text('수정하기');
+            $('#confirm_btn').attr('onclick', 'put_posts()')
+        });
+    }
+
+    function put_posts() {
+        alert('수정이다.')
+        let formData = new FormData();
+        let title = $('#title').val();
+        let writer = $('#writer').val();
+        let password = $('#password').val();
+        let content = $('#content').val();
+        formData.append("post_id", post_id);
+        formData.append("title_give", title);
+        formData.append("writer_give", writer);
+        formData.append("password_give", password);
+        formData.append("content_give", content);
+
+        // fetch('/editor/posting').then((res) => res.json()).then((data) => {
+        //     alert('fetch 성공')
+        // })
+
+        fetch('/posts', { method: "PUT", body: formData }).then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+            alert(data['msg']);
+            // loaction.href = `/posts/${post_id}`
+        });
+    }
+
+    function posting() {
+        let formData = new FormData();
+        let title = $('#title').val();
+        let writer = $('#writer').val();
+        let password = $('#password').val();
+        let content = $('#content').val();
+        formData.append("title_give", title);
+        formData.append("writer_give", writer);
+        formData.append("password_give", password);
+        formData.append("content_give", content);
+
+        // fetch('/editor/posting').then((res) => res.json()).then((data) => {
+        //     alert('fetch 성공')
+        // })
+
+        fetch('/posts', { method: "POST", body: formData }).then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+            alert(data['msg']);
+            // loaction.href = `/posts/${post_id}`
+        });
+    }
+</script>
+
+</html>

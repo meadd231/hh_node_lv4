@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <title>블로그 메인</title>
+</head>
+<style>
+    h1>a:link {
+        color: black;
+        text-decoration: none;
+    }
+
+    h1>a:visited {
+        color: black;
+        text-decoration: none;
+    }
+
+    h1>a:hover {
+        color: black;
+        text-decoration: none;
+    }
+</style>
+<body>
+    <h1><a href="/">LV1 블로그</a></h1>
+    <a href="/editor">글 쓰기</a>
+    <ul id="post_list">
+    </ul>
+</body>
+<script>
+    fetch('/posts').then(res => res.json()).then((data) => {
+        console.log(data)
+        data.forEach(post => {
+            temp_html = `<li>제목 : <a href="/content/${post['_id']}">${post['title']}</a>
+                작성자 : ${post['writer']}
+                작성 시각 : ${changeDateFormat(post['createdAt'])}</li>`;
+            $('#post_list').append(temp_html);
+        })
+    });
+    function changeDateFormat(createdAt) {
+        const dateObj = new Date(createdAt);
+        const TIME_ZONE = 9 * 60 * 60 * 1000; // 9시간 : 세계 표준 시각과 한국 시각의 차이인 것 같다.
+        const date = new Date(dateObj.getTime() + TIME_ZONE).toISOString().split('T')[0];
+        const time = dateObj.toTimeString().split(' ')[0];
+        return `${date}`;
+    }
+</script>
+</html>
