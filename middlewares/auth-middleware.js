@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
   // Bearer는 JWT라는 것을 알려주는 표식이다.
   if (authType !== "Bearer" || !authToken) {
     res.status(400).json({
-      errorMessage: "로그인 후에 이용할 수 있는 기능입니다."
+      errorMessage: "로그인이 필요한 기능입니다."
     });
     return;
   }
@@ -26,12 +26,8 @@ module.exports = async (req, res, next) => {
     // 3. authToken에 있는 userId에 해당하는 사용자가 실제 DB에 존재하는지 확인
     const user = await Users.findOne({
       where: { userId },
-      attributes: ['id', 'nickname']
+      attributes: ['userId', 'nickname'],
     });
-    // const post = await Posts.findOne({
-    //   where: { postId },
-    //   attributes: ['postId', 'userId', 'nickname', 'title', 'content', 'createdAt', 'updatedAt']
-    // });
     res.locals.user = user;
 
     next();
@@ -42,7 +38,7 @@ module.exports = async (req, res, next) => {
       return;
     }
 
-    res.status(400).json({ errorMessage: "로그인 후에 이용할 수 있는 기능입니다." });
+    res.status(400).json({ errorMessage: '로그인이 필요한 기능입니다.' });
     return;
   }
 }

@@ -9,16 +9,16 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.changeColumn('Users', 'userId', {
+    await queryInterface.changeColumn('Posts', 'userId', {
       type: Sequelize.INTEGER,
       references: {
-        model: 'Posts',
+        model: 'Users',
         key: 'userId'
       },
       onDelete: 'CASCADE'
     });
 
-    
+
 
   },
 

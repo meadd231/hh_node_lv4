@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
 			attributes: ['userId']
 		});
 		if (!user) {
-			res.status(412).json({ errorMessage: "닉네임 또는 패스워드를 확인해주세요." });
+			return res.status(412).json({ errorMessage: "닉네임 또는 패스워드를 확인해주세요." });
 		}
 		const token = jwt.sign({ userId: user.userId }, "secret_key_hh_node_js");
 		console.log(token);

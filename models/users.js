@@ -11,6 +11,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.Posts, {
+        sourceKey: 'userId',
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+      });
+      this.hasMany(models.Likes, {
+        sourceKey: 'userId',
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+      });
+      this.hasMany(models.Comments, {
+        sourceKey: 'userId',
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+      });
     }
   }
   Users.init({
@@ -33,12 +48,5 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Users',
   });
 
-  Users.associate = (models) => {
-    Users.hasMany(models.Posts, {
-      foreignKey: 'userId',
-      constraints: true,
-      onDelete: 'CASCADE',
-    });
-  };
   return Users;
 };

@@ -11,13 +11,31 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Users, {
+        targetKey: 'userId',
+        foreignKey: 'userId',
+      });
+      this.hasMany(models.Likes, {
+        sourceKey: 'postId',
+        foreignKey: 'postId',
+        onDelete: 'CASCADE',
+      });
+      this.hasMany(models.Comments, {
+        sourceKey: 'postId',
+        foreignKey: 'postId',
+        onDelete: 'CASCADE',
+      });
     }
   }
   Posts.init({
-    userId: {
+    postId: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    userId: {
+      allowNull: false,
       type: DataTypes.INTEGER
     },
     userId: {
@@ -51,11 +69,5 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Posts',
   });
 
-  // Posts.associate = (models) => {
-  //   Posts.belongsTo(models.Users, {
-  //     foreignKey: 'userId',
-  //     onDelete: 'CASCADE',
-  //   });
-  // };
   return Posts;
 };
