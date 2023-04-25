@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../schemas/user");
-const { Users } = require('../models');
+const { Users } = require("../models");
 
 // 콜백함수를 반환하는구나. 미들웨어는 결국 콜백함수인 걸까?
 module.exports = async (req, res, next) => {
@@ -12,7 +11,7 @@ module.exports = async (req, res, next) => {
   // Bearer는 JWT라는 것을 알려주는 표식이다.
   if (authType !== "Bearer" || !authToken) {
     res.status(400).json({
-      errorMessage: "로그인이 필요한 기능입니다."
+      errorMessage: "로그인이 필요한 기능입니다.",
     });
     return;
   }
@@ -26,19 +25,24 @@ module.exports = async (req, res, next) => {
     // 3. authToken에 있는 userId에 해당하는 사용자가 실제 DB에 존재하는지 확인
     const user = await Users.findOne({
       where: { userId },
-      attributes: ['userId', 'nickname'],
+      attributes: ["userId", "nickname"],
     });
     res.locals.user = user;
 
     next();
   } catch (error) {
     console.error(error);
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      res.status(403).json({ errorMessage: '전달된 쿠키에서 오류가 발생하였습니다.' });
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      res
+        .status(403)
+        .json({ errorMessage: "전달된 쿠키에서 오류가 발생하였습니다." });
       return;
     }
 
-    res.status(400).json({ errorMessage: '로그인이 필요한 기능입니다.' });
+    res.status(400).json({ errorMessage: "로그인이 필요한 기능입니다." });
     return;
   }
-}
+};
