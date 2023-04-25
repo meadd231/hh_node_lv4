@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
           model: Likes,
           attributes: [],
           where: { postId: Sequelize.col('Posts.postId') },
-          require: false,
+          required: false,
         }
       ],
       attributes: [
@@ -80,8 +80,17 @@ router.get('/like', authMiddleware, async (req, res) => {
   try {
     console.log('좋아요 게시글 보기');
     const { userId } = res.locals.user;
-    const posts = await Likes.findAll({
-      where: {userId},
+
+    const like_posts_list = [];
+    const my_like_posts = await Likes.findAll({
+      where: { userId }
+    });
+    my_like_posts.forEach((like) => {
+      like_posts_list.push(like.postId);
+    });
+
+    let posts = await Posts.findAll({
+      where: {},
       order : [
         ['likes', 'desc'], ['createdAt', 'desc']
       ],
@@ -91,10 +100,10 @@ router.get('/like', authMiddleware, async (req, res) => {
           attributes: ['nickname'],
         },
         {
-          model: Posts,
-          where: { postId: Sequelize.col('Likes.postId') },
+          model: Likes,
+          where: { postId: Sequelize.col('Posts.postId') },
           attributes: [],
-          require: true,
+          required: false,
         }
       ],
       attributes: [
@@ -104,6 +113,9 @@ router.get('/like', authMiddleware, async (req, res) => {
       group: ['Posts.postId'],
       raw: true,
     });
+    posts = posts.filter((post) => {
+      return like_posts_list.includes(post.postId);
+    })
     posts.map((post) => {
       post.nickname = post['User.nickname'];
       delete post['User.nickname'];
