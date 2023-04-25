@@ -79,8 +79,9 @@ router.get('/', async (req, res) => {
 router.get('/like', authMiddleware, async (req, res) => {
   try {
     console.log('좋아요 게시글 보기');
-    const posts = await Posts.findAll({
-      where: {},
+    const { userId } = res.locals.user;
+    const posts = await Likes.findAll({
+      where: {userId},
       order : [
         ['likes', 'desc'], ['createdAt', 'desc']
       ],
@@ -90,10 +91,10 @@ router.get('/like', authMiddleware, async (req, res) => {
           attributes: ['nickname'],
         },
         {
-          model: Likes,
+          model: Posts,
+          where: { postId: Sequelize.col('Likes.postId') },
           attributes: [],
-          where: { postId: Sequelize.col('Posts.postId') },
-          require: false,
+          require: true,
         }
       ],
       attributes: [
